@@ -1,6 +1,15 @@
 ---
-main_topsize: 0.15 #percent coverage of the poster
-main_bottomsize: 0.08
+poster_height: "16.53in"
+poster_width: "11.69in"
+main_textsize: "42px"
+body_textsize: "14px"
+caption_textsize: "14px"
+reference_textsize: "14px"
+author_textsize: "20px"
+authorextra_textsize: "14px"
+affiliation_textsize: "14px" 
+main_topsize: 0.1 #percent coverage of the poster
+main_bottomsize: 0.04
 main_fontfamily: Palatino
 #ESSENTIALS
 title: ''
@@ -8,7 +17,6 @@ author:
   - name: '**Alexander Spina (670000131)**'
     affil: 1
     main: true
-    email: afs211@exeter.ac.uk
   - name: Dr. Abu Bhakar
     affil: 2
   - name: Prof. Julie Thacker
@@ -20,16 +28,15 @@ affiliation:
     address: Lalibela Hospital, Amhara, Ethiopia 
 
 main_findings:
-  - "Opportunistic infections in HIV: \n diagnostics, management & outcomes \n in rural Ethiopia"
-logoleft_name: https&#58;//www.exeter.ac.uk/departments/communication/mark-ops/design/visualidentity/schoollogos/Medical_School_white.png
-logoright_name: https&#58;//scontent.fbey12-1.fna.fbcdn.net/v/t31.0-8/p960x960/13958185_1576646125964467_5619803854550030398_o.jpg?_nc_cat=111&_nc_sid=85a577&_nc_ohc=Vm583U0w5j8AX-Jy2AF&_nc_ht=scontent.fbey12-1.fna&_nc_tp=6&oh=eee768459826f359e154a777c8751441&oe=5EB921C3
-logocenter_name: 
+  - "   Opportunistic infections in HIV: <br>     diagnostics, management & outcomes in rural Ethiopia"
+logoleft_name:  https&#58;//www.exeter.ac.uk/departments/communication/communications/design/downloads/logos/white_logo.png
+column_numbers: 2
 output: 
   posterdown::posterdown_betterport:
     self_contained: false
     pandoc_args: --mathjax
     number_sections: false
-bibliography: packages.bib
+bibliography: references.bib
 link-citations: true
 ---
 
@@ -41,72 +48,218 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.align = 'center',
                       out.width = "100%")
 options(knitr.table.format = "html") 
+
+library("dplyr")
+library("ggplot2")
+library("ggraph")
+library("tidygraph")
 ```
 
 # Introduction
 
-This is the `posterdown_betterport` template for the {posterdown} package! I was inspired by the twitter thread of [Mike Morrison](https://mobile.twitter.com/mikemorrison/status/1110191245035479041) and wanted to apply the `#betterposter` concept to the reproducible (yet simple to use) functionality of the {posterdown} package [@R-posterdown]. If you're not an R user don't sweat as you do **NOT** need to use it at all! Feel free to use only the Markdown functionality of this package :)
-
-```{r, include=FALSE}
-knitr::write_bib(c('posterdown', 'rmarkdown','pagedown'), 'packages.bib')
-```
+Human immunodeficiency virus (HIV) prevalence in Ethiopia is 1.0 
+(95% credibility interval 0.7-1.4) per 100,000 population; ten-fold higher 
+than the UK [@unaids_unaids_2019].  
+In Amhara region, north-eastern Ethiopia, 
+1.2% (95%CI 0.7-1.4) of people had HIV in 2016 [@kibret_trends_2019].  
+While antiretroviral therapy (ART) has improved outcomes in most countries; 
+economically deprived rural areas still struggle with treatment retention and 
+viral suppression. Thus immunocompromised patients suffer from infections they 
+otherwise would not; contributing to a higher rate of mortality.  
+Lalibela hospital in Amhara has some diagnostic laboratory capacity and an 
+outpatient HIV department delivering ART. It is unclear whether there are 
+facilities for opportunistic infections in advanced HIV 
+infection (CD4 cell count <200/ml) [@assefa_outcomes_2011].  
+This project aims to understand local hospital capacity in addressing diagnosis 
+and management of opportunistic infections among HIV infected people,
+as well as patient outcomes.  
 
 ## Objectives
 
-1. Pick a template layout.
-2. Write/ create your poster content distraction free.
-3. Let posterdown do its thing!
+1. Describe HIV patient care pathway in the Lalibela healthcare system. 
+2. Describe diagnostic and management facilities in Lalibela hospital. 
+3. Describe outcomes among patients in care. 
 
 # Methods
 
-I will show here how to include poster elements that may be useful, such as an equation using mathjax:
+This project involved a mixed methods approach, incorporating qualitative and 
+quantitave aspects.  
+The qualitative approach involved guideline review and semi-structured interviews
+with local health care providers.  
+The qualitative approach involved gathering health system indicators in the form 
+of aggregate counts. This indicator data was gathered during the semi-structured 
+interviews and included:  
 
-$$
-E = mc^2
-$$
+- _Total catchment population_  
+- _Number HIV cases in hospital cohort_  
+- _Number cases with advanced HIV (CD4 cell count < 300 cells/mm^3^)_ 
+- _Number of patients with laboratory tests for opportunistic infections_ 
+- _Number of patients testing positive for opportunistic infections_ 
+- _Number of patients virally suprssed_ 
 
-To reference a citation you can add your `.bib` file to the working directory and name it in the YAML metadata or generate an automated one as done here, then you only need to reference the label value in the `.bib` file. For example this package is built on top of the wonderful {pagedown} package and I will cite it at the end of this sentance using this in the rmd `[@R-pagedown]` [@R-pagedown].
-
-To get a better understanding of how to include features like these please refer to the {posterdown} [wiki](https://github.com/posterdown/wiki).
-
-**_Now on to the results!_**
 
 # Results
 
-Here you may have some figures to show off, bellow I have made a scatterplot with the infamous Iris dataset and I can even reference to the figure automatically like this, `Figure \@ref(fig:irisfigure)`, Figure \@ref(fig:irisfigure).
+**Patient care pathway**  
+  
+A decentralised healthcare system serving an ~350,000 catchment population; with 5 community health 
+centres reporting to Lalibela hospital and 25 health posts reporting to each health centre, Figure \@ref(fig:healthsystem).  
 
-```{r, irisfigure, fig.cap='Here is a caption for the figure. This can be added by using the "fig.cap" option in the r code chunk options, see this [link](https://yihui.name/knitr/options/#plots) from the legend himself, [Yihui Xie](https://twitter.com/xieyihui).', out.width="80%"}
-par(mar = c(2,2,0,1))
-plot(x = iris$Sepal.Length, y = iris$Sepal.Width,
-     col = iris$Species, pch = 19, xlab = "Sepal Length",
-     ylab = "Sepal Width")
+- All hospital departments offer HIV RDT (high suspects tested) 
+- Health posts also have HIV RDT testing 
+- Initial and annual follow-up at hospital
+  + CD4, Viral load, malnutrition screening 
+- Medication dispensed at health centres 
+  + Ease of access leading to better conitnuity of care
+- All health care free under national insurance 
+- National HIV programme supported by the Global Fund for HIV, TB and Malaria 
+
+```{r, healthsystem, fig.cap='Visualisation of the health system in the Lalibela hospital catchment area', out.width="80%"}
+
+points <- tibble(from = sort(c(rep.int(1, 5), 
+                rep.int(2:6, 25))), 
+                to = c(2:6, rep.int(NA, 125)), 
+                health_type = c(rep.int("Hospital", 5), 
+                         rep.int("Health centre", 125)))
+
+hc <- 2:6
+
+for (i in hc) {
+  max_val <- max(points$to, na.rm = TRUE)
+  
+  points[which(points$from == i), 
+         "to"] <- (max_val + 1):(max_val + 25)
+}
+
+
+graph <- as_tbl_graph(points)
+
+ggraph(graph, layout = "partition", circular = TRUE) + 
+  geom_node_arc_bar(aes(fill = factor(depth)), size = 0.25) + 
+  coord_fixed() +
+  scale_fill_manual(values = c("#0b4545", 
+                               "#008080",
+                               "grey95"), 
+                    labels = c("Lalibela hospital", 
+                               "Health centres (n = 5)", 
+                               "Health posts (n = 125)")) + 
+  theme_void(base_size = 18) + 
+  theme(legend.title = element_blank()) 
+
 ```
 
-Maybe you want to show off some of that fancy code you spent so much time on to make that figure, well you can do that too! Just use the `echo=TRUE` option in the r code chunk options, Figure \@ref(fig:myprettycode)!
+**Diagnostics & management**  
+  
+There is a clear patient management pathway defined by a national programme.  
+The hospital has well resourced laboratory capacity, which is supported by 
+the US Centre for Disease Control and Prevention as well as Tulane 
+University. The available lab test and management at the hospital level are displayed 
+in Table \@ref(tab:labtable).
 
-```{r myprettycode, echo=TRUE, fig.cap='Boxplots, so hot right now!', fig.height=6, out.width="80%"}
-#trim whitespace
-par(mar = c(2,2,0,0))
-#plot boxplots
-boxplot(iris$Sepal.Width~iris$Species,
-        col = "#008080", 
-        border = "#0b4545",
-        ylab = "Sepal Width (cm)",
-        xlab = "Species")
-```
+- Viral load and HIV resistance testing sent to capital lab (25 days for results)  
+- CD4 count tests available at hospital 
+- All patients presenting with CD4 count <350 prophylactically given broad spectrum ABx against diarrhoea and fungal infections
 
-How about a neat table of data? See, Table \@ref(tab:iristable):
+```{r, labtable}
 
-```{r, iristable}
-knitr::kable(
-  iris[1:15,1:5], format = "html",
-  caption = "A table made with the **knitr::kable** function.",
-  align = "c", col.names = c("Sepal <br> Length",
-                             "Sepal <br> Width",
-                             "Petal <br> Length",
-                             "Petal <br> Width",
-                             "Species"),
+tibble(Disease = c("Tuberculosis", 
+                   "Sexually Transmitted Infections", 
+                   "Crytococcal Meningitis", 
+                   "Viral Hepatitis (B & C)"),
+       Diagnostics = c("Microscopy <br> PCR", 
+                       "ELISA", 
+                       "Culture", 
+                       "PCR <br>
+                       ELISA"), 
+       Management = c("Negative: prophylatic Isoniazide <br> Positive: Tripple therapy", 
+                      "Broad spectrum ABx",
+                      "Appropriate ABx", 
+                      "Patient pays privately for test, <br> 
+                      managment privately in capital"
+                      )) %>% 
+  knitr::kable(
+  format = "html",
+  caption = "Diagnostic and management facilities for HIV associated OIs",
+  align = "c",
   escape = FALSE)
 ```
+
+
+**Outcomes**  
+  
+With the national pharmacy association supplying hospitals, there are infrequent 
+ruptures. However there are shortages of second line ARV. Despite this there are
+quite impresive outcomes as seen in Figure \@ref(fig:cascade).  
+
+- 88% of those in the cohort are virally surpressed 
+- Among those with OIs: 55 had diarrhoea or skin infections, only 1 patient with extrapulmonary TB  
+  
+  
+```{r cascade, fig.cap='Cascade of care for opportunistic infections among HIV infected patients <br> (N = 350,000)', fig.height=6, out.width="80%"}
+
+# create a dataframe with counts for plotting 
+numbers <- tidyr::tibble(measure = c("HIV cases", 
+                                     "Advanced \n HIV cases \n (CD4 < 300)", 
+                                     "Advanced \n HIV cases tested \n for OIs",
+                                     "Cases with OIs"), 
+                         countz = c(1502, 
+                                    231, 
+                                    231, 
+                                    55)
+                         ) %>% 
+  # create proportions, dividing by previous row
+  mutate(measure = factor(measure, measure), 
+         prop = round(countz / lag(countz) * 100, digits = 1), 
+         prop = tidyr::replace_na(prop, 100))
+
+
+numbers[which(numbers$measure == "HIV cases"), "prop"] <- 0.4
+
+numbers <- mutate(numbers, 
+                  # pull together labels of counts and props
+                  labz = glue::glue("{countz} \n ({prop}%)")
+                  )
+         
+
+
+# initiate plot 
+ggplot(data = numbers) + 
+  # plot stacked bar charts with number of visits categorised by tested or not 
+  geom_bar(aes(x = measure, y = countz), fill = "#0b4545", stat = "identity") + 
+  # flip to make horizontal
+  coord_flip() + 
+  # add proportions as text labels 
+  geom_text(aes(x = measure, y = countz , label = labz), hjust = -0.15) +
+  # fix y axis plotting 
+  scale_x_discrete(limits = rev(levels(numbers$measure))) + 
+  # fix x axis plotting 
+  scale_y_continuous(expand = c(0,0), 
+                     limits = c(0, 2000), 
+                     breaks = seq(0, 2000, 250)) + 
+  # make classic bar chart and increase text size 
+  theme_classic(base_size = 18) + 
+  # make x axis labels slanted, remove legend title and move to bottom 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), 
+        legend.title = element_blank(), 
+        legend.position = "bottom", 
+        legend.box = "vertical") + 
+  # change the axis titles 
+  labs(x = "", y = "Counts (n% of above group)")
+
+
+
+```
+
+# Discussion / Conclusion
+
+The estimated HIV prevalence based on the hospital catchment population is much lower
+than literature described values for the region.  
+This along with the annecdotal reasoning that Lalibela prefecture is better off 
+than the surrounding region may explain the very impressive outcomes.  
+Nevertheless this appears to be a well structured and resourced health system 
+for addressing opportunistic infections in HIV patients. 
+Future studies should consider the impact on TB monotherapy on antimicrobial resistance
+prevalence, as well as the potential impact of making viral hepatitis testing and 
+management locally available free of charge. 
 
 # References

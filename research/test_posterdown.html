@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>test_posterdown.utf8</title>
+
+
+
+
+
+
+<!--
+Font-awesome icons ie github or twitter
+-->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/brands.css" integrity="sha384-n9+6/aSqa9lBidZMRCQHTHKJscPq6NW4pCQBiMmHdUCvPN8ZOg2zJJTkC7WIezWv" crossorigin="anonymous">
+
+<!--
+Google fonts api stuff
+-->
+<link href='https://fonts.googleapis.com/css?family=Palatino' rel='stylesheet'>
+<link href='https://fonts.googleapis.com/css?family=Rasa' rel='stylesheet'>
+
+<!--
+Here are the required style attributes for css to make this poster work :)
+-->
+<style>
+@page {
+size: 11.69in 16.53in;
+margin: 0;
+padding: 0;
+}
+body {
+margin: 0px;
+padding: 0px;
+width: 11.69in;
+height: 16.53in;
+text-align: justify;
+font-size: 14px;
+line-height: 1.05;
+}
+/* RMarkdown Class Styles */
+/* center align leaflet map,
+from https://stackoverflow.com/questions/52112119/center-leaflet-in-a-rmarkdown-document */
+.html-widget {
+margin: auto;
+position: sticky;
+margin-top: 2cm;
+margin-bottom: 2cm;
+}
+.leaflet.html-widget.html-widget-static-bound.leaflet-container.leaflet-touch.leaflet-fade-anim.leaflet-grab.leaflet-touch-drag.leaflet-touch-zoom {
+position: sticky;
+width: 100%;
+}
+pre.sourceCode.r {
+background-color: #dddddd40;
+border-radius: 4mm;
+padding: 4mm;
+width: 75%;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+/* align-items: center; */
+}
+code.sourceCode.r{
+background-color: transparent;
+font-size: 20pt;
+border-radius: 2mm;
+}
+code {
+font-size: 25pt;
+font-family: monospace;
+background-color: #00808024;
+color: #0b4545;
+padding: 1.2mm;
+line-height: 1;
+border-radius: 2mm;
+}
+caption {
+margin-bottom: 10px;
+font-size: 14px;
+font-style: italic;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #00808020;
+}
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{
+  border-spacing: 0;
+  font-size: 40%;
+  border-style: none;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-right: 1em;
+  padding-left: 1em;
+  line-height: 1em;
+}
+table {
+  margin: auto;
+}
+th {
+  padding-left: 5mm;
+  padding-right: 5mm;
+}
+.caption {
+font-size: 14px;
+font-style: italic;
+padding-top: 0;
+}
+.references {
+font-size: 14px;
+line-height: 90%;
+}
+/* Create three unequal columns that floats next to each other */
+.column {
+float: left;
+padding: 0px;
+}
+.outer {
+width: 11.69in;
+height: calc(16.53in *  (1 - 0.1 - 0.04 - 0.01) );
+-webkit-column-count: 2; /* Chrome, Safari, Opera */
+-moz-column-count: 2; /* Firefox */
+column-count: 2;
+-webkit-column-fill: auto;
+-moz-column-fill: auto;
+column-fill: auto;
+column-gap: 0;
+padding-left: 0cm;
+padding-right: 0cm;
+/* -webkit-column-rule-width: 50%;
+-moz-column-rule-width: 50%;
+column-rule-width: 50%; */
+-webkit-column-rule-style: none;
+-moz-column-rule-style: none;
+column-rule-style: none;
+-webkit-column-rule-color: black;
+-moz-column-rule-color: black;
+column-rule-color: black;
+background-color: #ffffff;
+font-family: Rasa;
+margin-top: calc(16.53in *  0.1 );
+padding-top: 1em;
+padding-bottom: 1em;
+}
+span.citation {
+  color: #008080;
+  font-weight: bold;
+}
+a {
+text-decoration: none;
+color: #008080;
+}
+#title {
+font-size: 125pt;
+text-align: left;
+margin: 0;
+line-height: 98%;
+border-bottom: 0;
+font-weight: normal;
+background: 0;
+}
+#author {
+color: #0b4545;
+margin: 0;
+line-height: 85%;
+font-size: 20px;
+}
+#affiliation {
+padding-top: 0.1em;
+color: ;
+font-style: italic;
+font-size: 14px;
+margin: 0;
+}
+sup {
+color: #cc0000;
+}
+.affiliation sup {
+font-size: 20px;
+}
+.author {
+text-align: left;
+}
+.author sup {
+font-size: 30px;
+}
+.author_extra {
+color: #008080;
+margin: 0;
+line-height: 85%;
+font-size: 14px;
+text-align: left;
+}
+.outer h1, h2, h3, h4, h5, h6 {
+text-align: center;
+margin: 0;
+font-weight: bold;
+}
+.section h1 {
+  text-align:center;
+  padding-bottom:5px;
+  background:
+    linear-gradient(
+      to left,
+      #ffffff 1%,
+      #ffffff 20%,
+      #0b454575 33%,
+      #0b4545 50%,
+      #0b454575 66%,
+      #ffffff 80%,
+      #ffffff 99%
+    )
+    left
+    bottom
+    #ffffff
+    no-repeat;
+  background-size:100% 5px ;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.outer h2 {
+text-align: center;
+}
+.outer p, .level2 {
+color: #000000;
+}
+.outer ol {
+padding-left: 8%;
+padding-right: 8%;
+text-align: left;
+}
+.main {
+width: 11.69in;
+height: calc(16.53in * 0.1);
+position: absolute;
+background-color: #0b4545;
+color: #ffffff90;
+font-family: Palatino;
+background-image: linear-gradient(#0b4545 50%,#008080);
+}
+.main strong {
+color: #ffffff;
+}
+.main strong > sup {
+color: #ffffff;
+}
+.main sup {
+color: #ffffff90;
+}
+#main-img-left {
+width: 10%;
+left: 0.5in;
+bottom: 0.2in;
+position: absolute;
+}
+#main-img-center {
+width: 10%;
+left: calc(11.69in * 0.45);
+bottom: 0.5in;
+position: absolute;
+}
+#main-img-right {
+width: 10%;
+right: 0.5in;
+bottom: 0.2in;
+position: absolute;
+}
+.main p {
+font-size: 42px;
+font-family: Palatino;
+text-align: center;
+margin: 0;
+position: absolute;
+top: 50%;
+-ms-transform: translateY(-50%);
+transform: translateY(-50%);
+margin-left: 1em;
+}
+.fab {
+color: #00000030;
+font-size: 25px;
+}
+.twitter, i {
+color: #00000030;
+font-size: 35px;
+text-decoration: none;
+}
+a.email {
+text-decoration: none;
+color: #00000030;
+font-size: 35px;
+}
+.envelope {
+color: #00000030;
+font-size: 5px;
+text-decoration: none;
+}
+.poster_wrap {
+width: 11.69in;
+height: 16.53in;
+padding: 0cm;
+}
+.main_bottom {
+width: 11.69in;
+height: calc(16.53in * 0.04);
+margin-top: calc(16.53in * (1 - 0.04));
+position: absolute;
+background-color: #0b4545;
+background-image: linear-gradient(#008080 10%, #0b4545);
+}
+.section {
+  padding-left: 10mm;
+  padding-right: 10mm;
+}
+span > #tab:mytable {
+  font-weight: bold;
+}
+.orcid img {
+  width: 3%;
+}
+.emphasis {
+  background-color: #008080;
+  color: #ffffff;
+  border: solid #0b2045 3mm;
+  margin: 1em;
+  padding-left: 0;
+  padding-right: 0;
+}
+.emphasis h1 {
+  font-weight: bold;
+  background: none;
+  background-color: #0b2045;
+  padding-bottom: 5mm;
+  padding-top: 1mm;
+  margin-top: -1mm;
+  margin-right: -1mm;
+  margin-left: -1mm;
+}
+.emphasis blockquote {
+  border: 0;
+}
+.emphasis ol {
+  padding: 0;
+  padding-left: 8%;
+  font-size: 100%;
+  font-weight: bold;
+}
+.emphasis p {
+  color: #ffffff;
+}
+</style>
+</head>
+<body>
+
+
+<div class="poster_wrap">
+
+<div class="column outer">
+<div class="section">
+
+<h3 id="author" class="author">
+
+<strong>Alexander Spina (670000131)</strong><sup> 1</sup><br>
+
+  </h3>
+
+<h5 id="author_extra", class="author_extra">
+ Dr. Abu Bhakar<sup>2</sup>
+ Prof. Julie Thacker<sup>1</sup>
+</h5>
+
+
+<p id="affiliation" class="affiliation">
+<sup>1</sup> University of Exeter Medical School, Exeter, United Kingdom<br> <sup>2</sup> Lalibela Hospital, Amhara, Ethiopia
+</p>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Human immunodeficiency virus (HIV) prevalence in Ethiopia is 1.0
+(95% credibility interval 0.7-1.4) per 100,000 population; ten-fold higher
+than the UK <span class="citation">(UNAIDS <a href="#ref-unaids_unaids_2019">2019</a>)</span>.<br />
+In Amhara region, north-eastern Ethiopia,
+1.2% (95%CI 0.7-1.4) of people had HIV in 2016 <span class="citation">(Kibret et al. <a href="#ref-kibret_trends_2019">2019</a>)</span>.<br />
+While antiretroviral therapy (ART) has improved outcomes in most countries;
+economically deprived rural areas still struggle with treatment retention and
+viral suppression. Thus immunocompromised patients suffer from infections they
+otherwise would not; contributing to a higher rate of mortality.<br />
+Lalibela hospital in Amhara has some diagnostic laboratory capacity and an
+outpatient HIV department delivering ART. It is unclear whether there are
+facilities for opportunistic infections in advanced HIV
+infection (CD4 cell count &lt;200/ml) <span class="citation">(Assefa et al. <a href="#ref-assefa_outcomes_2011">2011</a>)</span>.<br />
+This project aims to understand local hospital capacity in addressing diagnosis
+and management of opportunistic infections among HIV infected people,
+as well as patient outcomes.</p>
+<div id="objectives" class="section level2">
+<h2>Objectives</h2>
+<ol style="list-style-type: decimal">
+<li>Describe HIV patient care pathway in the Lalibela healthcare system.</li>
+<li>Describe diagnostic and management facilities in Lalibela hospital.</li>
+<li>Describe outcomes among patients in care.</li>
+</ol>
+</div>
+</div>
+<div id="methods" class="section level1">
+<h1>Methods</h1>
+<p>This project involved a mixed methods approach, incorporating qualitative and
+quantitave aspects.<br />
+The qualitative approach involved guideline review and semi-structured interviews
+with local health care providers.<br />
+The qualitative approach involved gathering health system indicators in the form
+of aggregate counts. This indicator data was gathered during the semi-structured
+interviews and included:</p>
+<ul>
+<li><em>Total catchment population</em><br />
+</li>
+<li><em>Number HIV cases in hospital cohort</em><br />
+</li>
+<li><em>Number cases with advanced HIV (CD4 cell count &lt; 300 cells/mm<sup>3</sup>)</em></li>
+<li><em>Number of patients with laboratory tests for opportunistic infections</em></li>
+<li><em>Number of patients testing positive for opportunistic infections</em></li>
+<li><em>Number of patients virally suprssed</em></li>
+</ul>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<p><strong>Patient care pathway</strong></p>
+<p>A decentralised healthcare system serving an ~350,000 catchment population; with 5 community health
+centres reporting to Lalibela hospital and 25 health posts reporting to each health centre, Figure <a href="#fig:healthsystem">1</a>.</p>
+<ul>
+<li>All hospital departments offer HIV RDT (high suspects tested)</li>
+<li>Health posts also have HIV RDT testing</li>
+<li>Initial and annual follow-up at hospital
+<ul>
+<li>CD4, Viral load, malnutrition screening</li>
+</ul></li>
+<li>Medication dispensed at health centres
+<ul>
+<li>Ease of access leading to better conitnuity of care</li>
+</ul></li>
+<li>All health care free under national insurance</li>
+<li>National HIV programme supported by the Global Fund for HIV, TB and Malaria</li>
+</ul>
+<div class="figure" style="text-align: center"><span id="fig:healthsystem"></span>
+<img src="test_posterdown_files/figure-html/healthsystem-1.png" alt="Visualisation of the health system in the Lalibela hospital catchment area" width="80%" />
+<p class="caption">
+Figure 1: Visualisation of the health system in the Lalibela hospital catchment area
+</p>
+</div>
+<p><strong>Diagnostics &amp; management</strong></p>
+<p>There is a clear patient management pathway defined by a national programme.<br />
+The hospital has well resourced laboratory capacity, which is supported by
+the US Centre for Disease Control and Prevention as well as Tulane
+University. The available lab test and management at the hospital level are displayed
+in Table <a href="#tab:labtable">1</a>.</p>
+<ul>
+<li>Viral load and HIV resistance testing sent to capital lab (25 days for results)<br />
+</li>
+<li>CD4 count tests available at hospital</li>
+<li>All patients presenting with CD4 count &lt;350 prophylactically given broad spectrum ABx against diarrhoea and fungal infections</li>
+</ul>
+<table>
+<caption>
+<span id="tab:labtable">Table 1: </span>Diagnostic and management facilities for HIV associated OIs
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+Disease
+</th>
+<th style="text-align:center;">
+Diagnostics
+</th>
+<th style="text-align:center;">
+Management
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Tuberculosis
+</td>
+<td style="text-align:center;">
+Microscopy <br> PCR
+</td>
+<td style="text-align:center;">
+Negative: prophylatic Isoniazide <br> Positive: Tripple therapy
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Sexually Transmitted Infections
+</td>
+<td style="text-align:center;">
+ELISA
+</td>
+<td style="text-align:center;">
+Broad spectrum ABx
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Crytococcal Meningitis
+</td>
+<td style="text-align:center;">
+Culture
+</td>
+<td style="text-align:center;">
+Appropriate ABx
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Viral Hepatitis (B &amp; C)
+</td>
+<td style="text-align:center;">
+PCR <br>
+ELISA
+</td>
+<td style="text-align:center;">
+Patient pays privately for test, <br>
+managment privately in capital
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outcomes</strong></p>
+<p>With the national pharmacy association supplying hospitals, there are infrequent
+ruptures. However there are shortages of second line ARV. Despite this there are
+quite impresive outcomes as seen in Figure <a href="#fig:cascade">2</a>.</p>
+<ul>
+<li>88% of those in the cohort are virally surpressed</li>
+<li>Among those with OIs: 55 had diarrhoea or skin infections, only 1 patient with extrapulmonary TB</li>
+</ul>
+<div class="figure" style="text-align: center"><span id="fig:cascade"></span>
+<img src="test_posterdown_files/figure-html/cascade-1.png" alt="Cascade of care for opportunistic infections among HIV infected patients &lt;br&gt; (N = 350,000)" width="80%" />
+<p class="caption">
+Figure 2: Cascade of care for opportunistic infections among HIV infected patients <br> (N = 350,000)
+</p>
+</div>
+</div>
+<div id="discussion-conclusion" class="section level1">
+<h1>Discussion / Conclusion</h1>
+<p>The estimated HIV prevalence based on the hospital catchment population is much lower
+than literature described values for the region.<br />
+This along with the annecdotal reasoning that Lalibela prefecture is better off
+than the surrounding region may explain the very impressive outcomes.<br />
+Nevertheless this appears to be a well structured and resourced health system
+for addressing opportunistic infections in HIV patients.
+Future studies should consider the impact on TB monotherapy on antimicrobial resistance
+prevalence, as well as the potential impact of making viral hepatitis testing and
+management locally available free of charge.</p>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-assefa_outcomes_2011">
+<p>Assefa, Yibeltal, Abiyou Kiflie, Dessalegn Tesfaye, Damen Haile Mariam, Helmut Kloos, Wouters Edwin, Marie Laga, and Wim Van Damme. 2011. “Outcomes of Antiretroviral Treatment Program in Ethiopia: Retention of Patients in Care Is a Major Challenge and Varies Across Health Facilities.” <em>BMC Health Services Research</em> 11 (1): 81. <a href="https://doi.org/10.1186/1472-6963-11-81">https://doi.org/10.1186/1472-6963-11-81</a>.</p>
+</div>
+<div id="ref-kibret_trends_2019">
+<p>Kibret, Getiye Dejenu, Aster Ferede, Cheru Tesema Leshargie, Fasil Wagnew, Daniel Bekele Ketema, and Animut Alebel. 2019. “Trends and Spatial Distributions of HIV Prevalence in Ethiopia.” <em>Infectious Diseases of Poverty</em> 8 (1): 90. <a href="https://doi.org/10.1186/s40249-019-0594-9">https://doi.org/10.1186/s40249-019-0594-9</a>.</p>
+</div>
+<div id="ref-unaids_unaids_2019">
+<p>UNAIDS. 2019. “UNAIDS Data 2019.” Joint United Nations Programme on HIV/AIDS (UNAIDS).</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="main">
+<p>Opportunistic infections in HIV: <br> diagnostics, management &amp; outcomes in rural Ethiopia</p>
+</div>
+<div class="main_bottom">
+<img id="main-img-left" src=https://www.exeter.ac.uk/departments/communication/communications/design/downloads/logos/white_logo.png>
+<img id="main-img-center" src=>
+<img id="main-img-right" src=>
+</div>
+</div>
+
+
+
+</body>
+</html>
