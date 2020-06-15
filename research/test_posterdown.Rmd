@@ -14,7 +14,7 @@ main_fontfamily: Palatino
 #ESSENTIALS
 title: ''
 author:
-  - name: '**Alexander Spina (670000131)**'
+  - name: '**First Author (670000131)**'
     affil: 1
     main: true
   - name: Dr. Abu Bhakar
@@ -37,6 +37,7 @@ output:
     pandoc_args: --mathjax
     number_sections: false
 bibliography: references.bib
+csl: "vancouver.csl"
 link-citations: true
 ---
 
@@ -147,6 +148,8 @@ ggraph(graph, layout = "partition", circular = TRUE) +
   theme(legend.title = element_blank()) 
 
 ```
+<br> 
+<br> 
 
 **Diagnostics & management**  
   

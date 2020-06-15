@@ -1,0 +1,392 @@
+---
+title: "Access to healthcare in rural Ethiopia"
+author: "Student ID: 670000131"
+date: "12/6/2020"
+output: 
+  powerpoint_presentation: 
+   reference_doc: "template.pptx"
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      fig.width = 16, 
+                      fig.height = 10)
+
+
+## install and load necessary packages 
+
+
+## Installing required packages for this template
+required_packages <- c("knitr",       # create output docs
+                       "here",        # find your files
+                       "dplyr",       # clean/shape data
+                       "rio",         # read in data
+                       "ggplot2",     # create plots and charts
+                       "patchwork",   # combine plots in one
+                       "sf",          # encode spatial vector data
+                       "ggspatial",   # plot maps
+                       "stars",       # deal with rasters 
+                       "raster",      # for getting admin bounds 
+                       "cartography", # getting tiles
+                       "osrm",        # for getting isochrones
+                       "colorspace"   # for getting useful colour schemes
+                       )   
+
+for (pkg in required_packages) {
+  # install packages if not already present
+  if (!pkg %in% rownames(installed.packages())) {
+    install.packages(pkg)
+  }
+  
+  # load packages to this current session 
+  library(pkg, character.only = TRUE)
+}
+
+
+
+## using osrm with a local map server 
+
+## download docker 
+    ## you have to enable visualisation in bios as well as make sure it is ticked in control panel
+## create a new folder somewhere (e.g. osrm_folder on your desktop) 
+## manually download a pbf file to that folder from geofabrik 
+  ## (nb using wget in powershell does not seem to actually download or save anything)
+## in powershell:
+  ## set working directory to that folder 
+    ##  Set-Location C:\Users\Spina\Desktop\osrm_folder
+  ##  follow these steps but skip the bit on wget and change names to your file 
+    ## (https://github.com/Project-OSRM/osrm-backend#using-docker)
+    
+## set the location of map server (running on your computer through docker) 
+options(osrm.server = "http://localhost:5000/")
+
+
+```
+
+## Background
+
+```{r intro_map}
+
+###### Read province boundaries from the Global Administrative 
+## level = 1 specifies provinces 
+## must be possible to do this as sf directly no? Is available on GADM.org
+provinces <- raster::getData("GADM", country = "ET", level = 2)
+
+## changing GADM to a sf object 
+provinces <- st_as_sf(provinces) %>% 
+  dplyr::filter(VARNAME_2 == "North Wollo")
+
+###### Read in and clean the population data set 
+
+population <- stars::read_stars(here::here("improving_healthcare", "eth_ppp_2020.tif"))
+
+## crop to be the same size as 
+pop_sub_og <- st_crop(population, provinces)
+
+## make in to data frame 
+pop_sub <- as.data.frame(pop_sub_og, xy = TRUE)
+
+## rename so usable 
+names(pop_sub) <- c("x", "y", "population")
+
+pop_sub$population <- cut(pop_sub$population, breaks = c(1, 30, 60, 90, 120, 150), 
+                       include.lowest = TRUE, 
+                       labels = c("1-30", "31-60", "61-90", "90-120", "120-150")) 
+
+
+
+###### Read in the WHO list of health sites if exists or download 
+if (file.exists(here::here("improving_healthcare", "df_who_sites.rda"))) {
+  ## if file already downloaded then just load it 
+  load(here::here("improving_healthcare", "df_who_sites.rda"))
+} else {
+  ## download from afrimapr github page
+  df_who_sites <- rio::import("https://github.com/afrimapr/afrihealthsites/blob/master/data/df_who_sites.rda?raw=true")
+}
+
+
+##### Clean up the health facilities 
+## only keep those in Amhara
+clinics <- dplyr::filter(df_who_sites, 
+                         Country == "Ethiopia" & 
+                           Admin1 == "Amhara" & 
+                           !is.na(Lat)) %>% 
+  ## make in to a points dataframe 
+  st_as_sf(coords = c("Long", "Lat"), 
+           crs = st_crs(provinces))
+
+## only keep clinics in north wollo 
+clinics <- clinics %>% 
+  mutate(include = st_intersects(clinics, provinces, sparse = FALSE)) %>% 
+  ## drop duplicate entry for lalibela hospital (in wrong place actually)
+  filter(include & !`Facility name` %in% c("Lalibela Hospital"))
+
+## change naming of health posts to be uniform 
+clinics <- mutate(clinics, 
+                  facility_type = dplyr::if_else(!facility_type_9 %in% c("Hospital", "Health Centre"), 
+                                          "Health Post", as.character(facility_type_9)))
+
+
+
+###### Get map tiles 
+
+## define a bounding box for the district 
+query_bbox <-
+  st_bbox(c(xmin = 38.5, 
+            xmax = 40,
+            ymin = 11.4, 
+            ymax = 12),
+          crs = st_crs("+proj=longlat +ellps=WGS84"))
+
+## make in to a sf object 
+query_bbox_sf <- st_as_sfc(query_bbox)
+
+
+## use the tiles package to download tiles
+intro_tiles <- cartography::getTiles(
+  query_bbox_sf,
+  type = "Esri.NatGeoWorldMap",
+  zoom = NULL,
+  crop = FALSE,
+  verbose = FALSE,
+  apikey = NA,
+  cachedir = FALSE,
+  forceDownload = FALSE
+)
+
+
+## download grey scale tiles for later because easier to visualise
+tiles <- cartography::getTiles(
+  query_bbox_sf,
+  type = "OpenTopoMap",
+  zoom = NULL,
+  crop = FALSE,
+  verbose = FALSE,
+  apikey = NA,
+  cachedir = FALSE,
+  forceDownload = FALSE
+)
+
+##### define a base plot  
+base_plot <- ggplot() + 
+  ## add in the back ground tiles 
+  ggspatial::layer_spatial(tiles, interpolate = TRUE) +
+  ## limit axes 
+  lims(x = c(38.43, 40.05), y = c(11.32, 12.35)) + 
+  ## remove all extras 
+  theme_void(base_size = 24) + 
+  # add a scalebar
+  ggspatial::annotation_scale(location = "br")
+
+#### plot intro slide map 
+## add province outline to the base map and two hospitals 
+ggplot() + 
+  ## add in the back ground tiles 
+  ggspatial::layer_spatial(intro_tiles, interpolate = TRUE) +
+  ## limit axes 
+  lims(x = c(38.43, 40.05), y = c(11.32, 12.35)) + 
+  ## remove all extras 
+  theme_void(base_size = 24) + 
+  # add a scalebar
+  ggspatial::annotation_scale(location = "br") +
+  geom_sf(data = provinces, fill = NA, size = 2) + 
+  geom_sf(data = filter(clinics, facility_type_9 == "Hospital"), 
+          colour = "red", size = 2) 
+
+## drop intro tiles, original pop, original who file (takes up memory)
+rm(df_who_sites)
+rm(intro_tiles)
+rm(population)
+```
+
+
+##
+
+![](intro_pics.png)
+
+## Aim 
+
+- To evaluate the accessibility of health care facilities in North Wollo district 
+  + Calculate travel times to health care facilities
+  + Compare travel times to spatial population density
+
+## Methods
+
+- World Health Organisation geo-referenced list of healthcare facilities
+- Population density estimates from World Population database 
+- Travel times to health facilities using Open Source Routing Machine
+- Overlay travel times and population density to visualise areas with poor access
+- All analysis done with R statistical software (Version 4.0) 
+
+## Results
+
+```{r clinics_pop}
+
+base_plot + 
+  ## add in population raster, fill by factor var
+    geom_raster(data = filter(pop_sub, !is.na(population)),
+                aes(x = x, y = y, fill = population), alpha = 0.5) +
+  ## choose colours and reverse the order 
+  scale_fill_discrete_sequential("Greens", rev = FALSE) + 
+  ## add in points for clinics and colour by type 
+  geom_sf(data = clinics, aes(colour = facility_type), size = 3) + 
+  ## choose colour scale 
+  scale_colour_discrete_sequential("OrRd", rev = FALSE) + 
+  ## fix legend titles and plot title 
+  labs(fill = "Population / km2", colour = "Facility")
+
+```
+
+
+
+## 
+
+
+```{r hospital_drive_time}
+
+## set the routing machine to return driving times
+options(osrm.profile = "driving")
+
+## Only downloads if hasnt already got file 
+## get the isochrones for each hospital and store in a list 
+## isochrones up to 3 hours drive in 45 minute chunks
+if (file.exists(here::here("improving_healthcare", "driving.rds"))) {
+  isos <- readRDS(here::here("improving_healthcare", "driving.rds"))
+} else {
+  ## query local map server 
+  isos <- purrr::map(st_geometry(filter(clinics, facility_type_9 == "Hospital")), 
+                   function(x) { osrmIsochrone(loc = x,          
+                                               returnclass="sf",
+                                               breaks = seq(from = 0, to = 180, by = 45), res = 50)})
+  
+  ## save list as an rds so dont have to continually query 
+  saveRDS(isos, file = here::here("improving_healthcare", "driving.rds"))
+}
+
+
+## add in a label for each poly (travel time range)
+wtf <- purrr::map(isos, function(x) mutate(x, label = paste(min, max, sep = "-")) %>%
+                    dplyr::select(label, geometry))
+
+## get a the travel time groupings for labelling later 
+travel_times <- tibble(label = factor(unique(wtf[[1]]$label), 
+                                             levels = c(unique(wtf[[1]]$label))), 
+                       clrs = factor(sequential_hcl(length(label), palette = "OrRd", rev = TRUE), 
+                                     levels = sequential_hcl(length(label), palette = "OrRd", rev = TRUE))
+                       )
+
+## combine them together in to one 
+wtf <- do.call(what = rbind, wtf)
+
+## combine, remove internal lines and crop to base_plot
+wtf <- purrr::map(unique(wtf$label),
+                  function(x) {
+                    intermed <- st_union(filter(wtf, label == x))
+                    intermed <- sfheaders::sf_remove_holes(intermed) 
+                    intermed <- st_crop(intermed, provinces)
+                    intermed
+                  })
+
+## plot tiles 
+base_plot + 
+  ## plot population 
+  geom_raster(data = filter(pop_sub, !is.na(population)),
+              aes(x = x, y = y), fill = "blue", alpha = 0.5) + 
+  geom_sf(data = wtf[[4]], aes(fill = travel_times$clrs[4]), alpha = 0.5, col = NA) +
+  geom_sf(data = wtf[[3]], aes(fill = travel_times$clrs[3]), alpha = 0.5, col = NA) + 
+  geom_sf(data = wtf[[2]], aes(fill = travel_times$clrs[2]), alpha = 0.5, col = NA) + 
+  geom_sf(data = wtf[[1]], aes(fill = travel_times$clrs[1]), alpha = 0.5, col = NA) + 
+  scale_fill_identity(
+    labels = rev(travel_times$label),
+    guide = "legend") + 
+  labs(fill = "Travel time (mins)")
+
+
+```
+
+## 
+
+
+```{r hospital_walk_time}
+
+## set the routing machine to return walking times
+options(osrm.profile = "walk")
+
+## Only downloads if hasnt already got file 
+## get the isochrones for each hospital and store in a list 
+## isochrones up to 5 hours drive in 60 minute chunks
+if (file.exists(here::here("improving_healthcare", "walking.rds"))) {
+  isos <- readRDS(here::here("improving_healthcare", "walking.rds"))
+} else {
+  ## query local map server 
+  isos <- purrr::map(st_geometry(filter(clinics, facility_type_9 == "Hospital")), 
+                   function(x) { osrmIsochrone(loc = x,          
+                                               returnclass="sf",
+                                               breaks = seq(from = 0, to = 300, by = 60), res = 50)})
+  
+  ## save list as an rds so dont have to continually query 
+  saveRDS(isos, file = here::here("improving_healthcare", "walking.rds"))
+}
+
+
+## add in a label for each poly (travel time range)
+wtf <- purrr::map(isos, function(x) mutate(x, label = paste(min, max, sep = "-")) %>%
+                    dplyr::select(label, geometry))
+
+## get a the travel time groupings for labelling later 
+travel_times <- tibble(label = factor(unique(wtf[[1]]$label), 
+                                             levels = c(unique(wtf[[1]]$label))), 
+                       clrs = factor(sequential_hcl(length(label), palette = "OrRd", rev = TRUE), 
+                                     levels = sequential_hcl(length(label), palette = "OrRd", rev = TRUE))
+                       )
+
+## combine them together in to one 
+wtf <- do.call(what = rbind, wtf)
+
+## combine, remove internal lines and crop to base_plot
+wtf <- purrr::map(unique(wtf$label),
+                  function(x) {
+                    intermed <- st_union(filter(wtf, label == x))
+                    # intermed <- sfheaders::sf_remove_holes(intermed) 
+                    intermed <- st_crop(intermed, provinces)
+                    intermed
+                  })
+
+## plot tiles 
+base_plot + 
+  ## plot population 
+  geom_raster(data = filter(pop_sub, !is.na(population)),
+              aes(x = x, y = y), fill = "blue", alpha = 0.5) + 
+  geom_sf(data = wtf[[4]], aes(fill = travel_times$clrs[5]), alpha = 0.5, col = NA) +
+  geom_sf(data = wtf[[4]], aes(fill = travel_times$clrs[4]), alpha = 0.5, col = NA) +
+  geom_sf(data = wtf[[3]], aes(fill = travel_times$clrs[3]), alpha = 0.5, col = NA) + 
+  geom_sf(data = wtf[[2]], aes(fill = travel_times$clrs[2]), alpha = 0.5, col = NA) + 
+  geom_sf(data = wtf[[1]], aes(fill = travel_times$clrs[1]), alpha = 0.5, col = NA) + 
+  scale_fill_identity(
+    labels = rev(travel_times$label),
+    guide = "legend") + 
+  labs(fill = "Travel time (mins)")
+
+```
+
+
+## Discussion
+
+- Limitations 
+  + Walking paths 
+  + Rainy season 
+  + Accuracy of locations 
+  
+- Identify locations that need better access 
+  + Planning new infrastructure 
+  + Mobile clinics 
+  
+- Further studies 
+  + Surveys of access and health care utilisation 
+  + Capture re-capture studies for accuracy of locations 
+  
+
+## References 
