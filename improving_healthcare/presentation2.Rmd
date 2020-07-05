@@ -80,7 +80,10 @@ provinces <- st_as_sf(provinces) %>%
   dplyr::filter(VARNAME_2 == "North Wollo")
 
 ###### Read in and clean the population data set 
-
+## download population tiff from worldpop
+## https://www.worldpop.org/geodata/summary?id=31078 
+## in future (once datasets become available) would be better to use the wopr package
+## https://www.worldpop.org/sdi/plugins
 population <- stars::read_stars(here::here("improving_healthcare", "eth_ppp_2020.tif"))
 
 ## crop to be the same size as 
@@ -92,10 +95,15 @@ pop_sub <- as.data.frame(pop_sub_og, xy = TRUE)
 ## rename so usable 
 names(pop_sub) <- c("x", "y", "population")
 
-pop_sub$population <- cut(pop_sub$population, breaks = c(1, 30, 60, 90, 120, 150), 
+pop_sub$population <- cut(pop_sub$population, breaks = c(0, 1, 30, 60, 90, 120, 150), 
                        include.lowest = TRUE, 
-                       labels = c("1-30", "31-60", "61-90", "90-120", "120-150")) 
+                       labels = c("0", "1-30", "31-60", "61-90", "90-120", "120-150")) 
 
+
+
+# pop_sub_sf <- st_as_sf(pop_sub, coords = c("x", "y"))
+# 
+# pop_sub_sf_poly <- aggregate(pop_sub_sf, by = "population", do_union = TRUE)
 
 
 ###### Read in the WHO list of health sites if exists or download 
