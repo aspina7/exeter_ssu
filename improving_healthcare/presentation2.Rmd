@@ -51,6 +51,7 @@ for (pkg in required_packages) {
 
 ## download docker 
     ## you have to enable visualisation in bios as well as make sure it is ticked in control panel
+    ## (bios is the thing where you spam a button on startup and goes all 90s blue console - google it)
 ## create a new folder somewhere (e.g. osrm_folder on your desktop) 
 ## manually download a pbf file to that folder from geofabrik 
   ## (nb using wget in powershell does not seem to actually download or save anything)
